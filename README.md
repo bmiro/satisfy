@@ -50,6 +50,15 @@ By default, the `satis.json` file is expected at the project root, but You can s
 
 You can restrict the access setting `admin.auth` parameter (in `app/config/parameters.yml`) to `true`. Set authorized users in `admin.users` config array.
 
+### Run with docker-compose
+
+* Start the container: `docker-compose up -d`
+* Install composer dependecies and setup wizzard: `docker-compose exec satisfy composer install`
+
+You can avoid the interactive wizzard by creating the `app/config/parameters.yml` file manually (or from `parameters.yml.dist`)
+
+Commands inside the container can be run with `docker-compose exec satisfy <some command>`.
+
 ## Run Satisfy
 
 Create a webserver pointing to the `web` directory. Browse to »/admin/« to manage the `satis.json`. To serve the `package.json` it is required to run Satis first.

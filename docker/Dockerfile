@@ -5,7 +5,6 @@ RUN apt-get update -q \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENV COMPOSER_VERSION 1.9.1
-
 RUN set -eux; \
   curl --silent --fail --location --retry 3 --output /tmp/installer.php --url https://raw.githubusercontent.com/composer/getcomposer.org/cb19f2aa3aeaa2006c0cd69a7ef011eb31463067/web/installer; \
   php -r " \
@@ -21,6 +20,12 @@ RUN set -eux; \
   rm -f /tmp/installer.php; \
   find /tmp -type d -exec chmod -v 1777 {} +
 
+RUN apt-get update \
+  && apt-get install -y \
+        libzip-dev \
+        zip \
+  && docker-php-ext-configure zip --with-libzip \
+  && docker-php-ext-install zip
 
 ADD conf/supervisor/* /etc/supervisor/conf.d/
 ADD conf/cron.conf /etc/cron.d/satisfy
@@ -36,6 +41,7 @@ ARG APP_PATH=/var/www/satisfy
 
 WORKDIR /var/www/satisfy
 
-ADD conf/entrypoint.sh
+ADD conf/entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
+CMD ["supervisord", "-n"]
